@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Include="System.Reactive" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlayerDB.Contracts\PlayerDB.Contracts.csproj" />
+    <ProjectReference Include="..\PlayerDB.DataModel\PlayerDB.DataModel.csproj" />
+    <ProjectReference Include="..\PlayerDB.Utilities\PlayerDB.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Page
+    x:Class="PlayerDB.App.GameClient.GameClientPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:gameClient="using:PlayerDB.App.GameClient"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="using:PlayerDB.App.Util"
+    x:Name="MainGameClientPage"
+    Background="{ThemeResource PageBackgroundBrush}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="MatchesListViewTemplate" x:DataType="gameClient:PlayerMatchItem">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,5,5,5">
+                    <Run Text="{x:Bind gameClient:GameClientPage.RenderClanName(ClanName)}" />
+                    <Run Text="{x:Bind Name}" />
+                </TextBlock>
+                <Border
+                    VerticalAlignment="Center"
+                    Background="{ThemeResource BadgeBackgroundBrush}"
+                    CornerRadius="10">
+                    <util:RaceIcon
+                        Width="12"
+                        Height="12"
+                        Margin="3"
+                        VerticalAlignment="Center"
+                        UseRaceColourFill="False"
+                        ViewModel="{x:Bind PlayerRace}" />
+                </Border>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Style="{StaticResource NavigationPageStyle}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Orientation="Vertical">
+            <ToggleSwitch
+                x:Name="GameClientConnectionToggleSwitch"
+                Margin="5,10,0,10"
+                HorizontalAlignment="Stretch"
+                IsOn="{x:Bind ViewModel.IsConnectedToGameClient, Mode=TwoWay}">
+                <ToggleSwitch.Header>
+                    <TextBlock HorizontalAlignment="Center" FontSize="18">
+                        Connect to game client
+                    </TextBlock>
+                </ToggleSwitch.Header>
+                <ToggleSwitch.OnContent>
+                    <TextBlock FontSize="12">
+                        Reading players from game client
+                    </TextBlock>
+                </ToggleSwitch.OnContent>
+                <ToggleSwitch.OffContent>
+                    <TextBlock FontSize="12">
+                        Disconnected
+                    </TextBlock>
+                </ToggleSwitch.OffContent>
+            </ToggleSwitch>
+            <TextBlock
+                Padding="0,10,0,10"
+                HorizontalAlignment="Center"
+                FontSize="18">
+                Possible player matches
+            </TextBlock>
+            <ListView
+                x:Name="MatchesListView"
+                Width="250"
+                MinHeight="100"
+                Margin="5,5,0,20"
+                Padding="0,5,0,25"
+                HorizontalAlignment="Left"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                BorderThickness="1"
+                ItemTemplate="{StaticResource MatchesListViewTemplate}"
+                ItemsSource="{x:Bind ViewModel.Matches, Mode=OneWay}"
+                SelectedItem="{x:Bind ViewModel.SelectedMatch, Mode=TwoWay}"
+                SelectionChanged="MatchesListView_OnSelectionChanged" />
+        </StackPanel>
+
+        <gameClient:PlayerDetailsView
+            Grid.Column="1"
+            Margin="25,0,0,0"
+            ViewModel="{x:Bind ViewModel.PlayerDetailsViewModel}" />
+        <StackPanel
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Visibility="{x:Bind ViewModel.IsWaitingForPlayer, Mode=OneWay}">
+
+            <ProgressRing Margin="15,0" IsIndeterminate="True" />
+            <TextBlock FontSize="24">Waiting for players...</TextBlock>
+        </StackPanel>
+    </Grid>
+</Page>

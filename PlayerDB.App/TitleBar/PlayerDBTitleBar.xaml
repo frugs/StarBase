@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<UserControl
+    x:Class="PlayerDB.App.TitleBar.PlayerDBTitleBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:titleBar="using:PlayerDB.App.TitleBar"
+    mc:Ignorable="d">
+
+    <StackPanel
+        Height="36"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Top"
+        Orientation="Horizontal">
+        <titleBar:AppIcon Width="48" VerticalAlignment="Center" />
+        <TextBlock Margin="5,0,0,0" VerticalAlignment="Center">StarBase</TextBlock>
+    </StackPanel>
+</UserControl>

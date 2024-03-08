@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<UserControl
+    x:Class="PlayerDB.App.GameClient.BuildOrderHistoryView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="10">
+        <Grid.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Margin" Value="4,8" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontStyle" Value="Italic" />
+                <Setter Property="FontWeight" Value="Light" />
+                <Setter Property="Foreground" Value="{StaticResource SystemAccentColor}" />
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="Margin" Value="5,0" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="Background" Value="{StaticResource TextBoxBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{StaticResource SystemControlForegroundBaseLowBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="2" />
+                <Setter Property="FontFamily" Value="Consolas" />
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="AcceptsReturn" Value="True" />
+                <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    x:Name="BorderElement"
+                                    Grid.Row="1"
+                                    Grid.RowSpan="1"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    MinWidth="{TemplateBinding MinWidth}"
+                                    MinHeight="{TemplateBinding MinHeight}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Control.IsTemplateFocusTarget="True"
+                                    CornerRadius="{TemplateBinding CornerRadius}" />
+                                <ScrollViewer
+                                    x:Name="ContentElement"
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Margin="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                    IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                    IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                    IsTabStop="False"
+                                    IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                    VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                    ZoomMode="Disabled" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid
+            Grid.Row="0"
+            Grid.Column="0"
+            Margin="0,0,0,4"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{x:Bind ReplayDetailsVisibility(ViewModel, 0)}">
+            <Border
+                Height="24"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Background="{ThemeResource BadgeBackgroundBrush}"
+                CornerRadius="12" />
+            <TextBlock Margin="30,0,30,1" VerticalAlignment="Center">
+                <Run Text="{x:Bind RenderReplayStartTime(ViewModel, 0)}" />
+                <Run Text="{x:Bind RenderMatchUp(ViewModel, 0)}" />
+                <Run Text="{x:Bind RenderPlayerMmr(ViewModel, 0)}" />
+            </TextBlock>
+        </Grid>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="0"
+            Text="{x:Bind RenderBuildOrder(ViewModel, 0)}"
+            Visibility="{x:Bind BuildOrderVisibility(ViewModel, 0)}" />
+        <ProgressRing
+            Grid.Row="1"
+            Grid.Column="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsIndeterminate="True"
+            Visibility="{x:Bind ProgressRingVisibility(ViewModel, 0)}" />
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="0,0,0,4"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{x:Bind ReplayDetailsVisibility(ViewModel, 1)}">
+            <Border
+                Height="24"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Background="{ThemeResource BadgeBackgroundBrush}"
+                CornerRadius="12" />
+            <TextBlock Margin="30,0,30,1" VerticalAlignment="Center">
+                <Run Text="{x:Bind RenderReplayStartTime(ViewModel, 1)}" />
+                <Run Text="{x:Bind RenderMatchUp(ViewModel, 1)}" />
+                <Run Text="{x:Bind RenderPlayerMmr(ViewModel, 1)}" />
+            </TextBlock>
+        </Grid>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="{x:Bind RenderBuildOrder(ViewModel, 1)}"
+            Visibility="{x:Bind BuildOrderVisibility(ViewModel, 1)}" />
+        <ProgressRing
+            Grid.Row="1"
+            Grid.Column="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsIndeterminate="True"
+            Visibility="{x:Bind ProgressRingVisibility(ViewModel, 1)}" />
+
+        <Grid
+            Grid.Row="0"
+            Grid.Column="2"
+            Margin="0,0,0,4"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="{x:Bind ReplayDetailsVisibility(ViewModel, 2)}">
+            <Border
+                Height="24"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Background="{ThemeResource BadgeBackgroundBrush}"
+                CornerRadius="12" />
+            <TextBlock Margin="30,0,30,1" VerticalAlignment="Center">
+                <Run Text="{x:Bind RenderReplayStartTime(ViewModel, 2)}" />
+                <Run Text="{x:Bind RenderMatchUp(ViewModel, 2)}" />
+                <Run Text="{x:Bind RenderPlayerMmr(ViewModel, 2)}" />
+            </TextBlock>
+        </Grid>
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="2"
+            Text="{x:Bind RenderBuildOrder(ViewModel, 2)}"
+            Visibility="{x:Bind BuildOrderVisibility(ViewModel, 2)}" />
+        <ProgressRing
+            Grid.Row="1"
+            Grid.Column="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsIndeterminate="True"
+            Visibility="{x:Bind ProgressRingVisibility(ViewModel, 2)}" />
+    </Grid>
+</UserControl>

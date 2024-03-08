@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PlayerDBApp (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "PlayerDBApp (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

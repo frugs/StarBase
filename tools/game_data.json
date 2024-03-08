@@ -1,0 +1,22 @@
+{
+	"game": {
+		"isReplay": false,
+		"displayTime": 3.0,
+		"players": [
+			{
+				"id": 1,
+				"name": "frugs",
+				"type": "user",
+				"race": "Zerg",
+				"result": "Undecided"
+			},
+			{
+				"id": 2,
+				"name": "AlephZero",
+				"type": "user",
+				"race": "Terran",
+				"result": "Undecided"
+			}
+		]
+	}
+}

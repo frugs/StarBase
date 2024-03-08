@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Page
+    x:Class="PlayerDB.App.Settings.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI.UI"
+    Background="{ThemeResource PageBackgroundBrush}"
+    mc:Ignorable="d">
+    <Grid Style="{StaticResource NavigationPageStyle}">
+        <StackPanel
+            MaxWidth="600"
+            HorizontalAlignment="Left"
+            Orientation="Vertical"
+            Spacing="4">
+            <controls:SettingsCard
+                Description="All cleared data will be deleted permanently, and cannot be reversed. Your replay files will remain unaffected."
+                Header="Data Management"
+                HeaderIcon="{ui:FontIcon Glyph=&#xe7ba;}">
+                <controls:SettingsCard.Resources>
+                    <x:Double x:Key="SettingsCardWrapThreshold">100000</x:Double>
+                </controls:SettingsCard.Resources>
+
+                <StackPanel
+                    Margin="0,8,0,0"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal"
+                    Spacing="24">
+                    <Button Background="{ThemeResource RemoveBrush}" Style="{StaticResource RemoveButtonStyle}">
+                        <TextBlock FontSize="14">Clear all players and build orders</TextBlock>
+                        <Button.Flyout>
+                            <Flyout x:Name="ClearPlayersAndBuildOrdersConfirmationFlyout">
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,0,0,12"
+                                        Style="{ThemeResource BaseTextBlockStyle}"
+                                        Text="This action cannot be reversed. Do you want to continue?" />
+                                    <Button
+                                        x:Name="ClearPlayersAndBuildOrdersConfirmationButton"
+                                        Click="ClearPlayersAndBuildOrdersConfirmationButton_OnClick"
+                                        Content="Yes, clear players and build orders" />
+                                    <Grid Height="12">
+                                        <ProgressBar
+                                            x:Name="ClearPlayersAndBuildOrdersConfirmationFlyoutProgressBar"
+                                            Margin="0,4"
+                                            IsIndeterminate="True"
+                                            Visibility="Collapsed" />
+                                    </Grid>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Style="{StaticResource RemoveButtonStyle}">
+                        <TextBlock FontSize="14">Reset all app settings to defaults</TextBlock>
+                        <Button.Flyout>
+                            <Flyout x:Name="ResetSettingsConfirmationFlyout">
+                                <StackPanel>
+                                    <TextBlock
+                                        Margin="0,0,0,12"
+                                        Style="{ThemeResource BaseTextBlockStyle}"
+                                        Text="This action cannot be reversed. Do you want to continue?" />
+                                    <Button x:Name="ResetSettingsConfirmButton" Click="ResetSettingsConfirmButton_OnClick">
+                                        <Button.Content>
+                                            <TextBlock>
+                                                Yes, reset my settings
+                                            </TextBlock>
+                                        </Button.Content>
+                                    </Button>
+                                    <Grid Height="12">
+                                        <ProgressBar
+                                            x:Name="ResetSettingsConfirmationFlyoutProgressBar"
+                                            Margin="0,4"
+                                            IsIndeterminate="True"
+                                            Visibility="Collapsed" />
+                                    </Grid>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                </StackPanel>
+
+            </controls:SettingsCard>
+
+        </StackPanel>
+    </Grid>
+</Page>

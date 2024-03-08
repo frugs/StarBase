@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<UserControl
+    x:Class="PlayerDB.App.GameClient.RaceToggleButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:util="using:PlayerDB.App.Util"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <AcrylicBrush
+            x:Key="RaceIconBorderBrush"
+            TintColor="#F7F8F9"
+            TintOpacity="0.9" />
+    </UserControl.Resources>
+
+    <ToggleButton
+        x:Name="ToggleButton"
+        Click="ToggleButton_OnClick"
+        IsChecked="{x:Bind IsChecked, Mode=TwoWay}">
+        <Border Background="{StaticResource RaceIconBorderBrush}" CornerRadius="20">
+            <util:RaceIcon
+                Width="23"
+                Height="23"
+                Margin="8"
+                VerticalAlignment="Center"
+                IsProtoss="{x:Bind IsProtoss}"
+                IsTerran="{x:Bind IsTerran}"
+                IsZerg="{x:Bind IsZerg}" />
+        </Border>
+    </ToggleButton>
+
+</UserControl>

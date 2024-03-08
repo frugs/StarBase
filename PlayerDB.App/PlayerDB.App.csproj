@@ -1,0 +1,208 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>PlayerDB.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x64</Platforms>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishProfile>win-$(Platform).pubxml</PublishProfile>
+    <UseRidGraph>true</UseRidGraph>
+    <UseWinUI>true</UseWinUI>
+    <EnableMsixTooling>true</EnableMsixTooling>
+    <Nullable>enable</Nullable>
+    <StartupObject>PlayerDB.App.Program</StartupObject>
+    <ApplicationIcon>Assets\logo3_padded.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-16.png" />
+    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-24.png" />
+    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-256.png" />
+    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-32.png" />
+    <Content Remove="Assets\AppIcon.altform-lightunplated_targetsize-48.png" />
+    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-16.png" />
+    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-24.png" />
+    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-256.png" />
+    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-32.png" />
+    <Content Remove="Assets\AppIcon.altform-unplated_targetsize-48.png" />
+    <Content Remove="Assets\AppIcon.scale-150.png" />
+    <Content Remove="Assets\AppIcon.scale-200.png" />
+    <Content Remove="Assets\AppIcon.targetsize-16.png" />
+    <Content Remove="Assets\AppIcon.targetsize-24.png" />
+    <Content Remove="Assets\AppIcon.targetsize-32.png" />
+    <Content Remove="Assets\AppIcon.targetsize-48.png" />
+    <Content Remove="Assets\BadgeLogo.scale-100.png" />
+    <Content Remove="Assets\BadgeLogo.scale-125.png" />
+    <Content Remove="Assets\BadgeLogo.scale-150.png" />
+    <Content Remove="Assets\BadgeLogo.scale-200.png" />
+    <Content Remove="Assets\LargeTile.scale-100.png" />
+    <Content Remove="Assets\LargeTile.scale-125.png" />
+    <Content Remove="Assets\LargeTile.scale-150.png" />
+    <Content Remove="Assets\LargeTile.scale-200.png" />
+    <Content Remove="Assets\logo2_padded_16.png" />
+    <Content Remove="Assets\logo2_padded_256.png" />
+    <Content Remove="Assets\logo2_padded_32.png" />
+    <Content Remove="Assets\logo2_padded_48.png" />
+    <Content Remove="Assets\logo2_padded_64.png" />
+    <Content Remove="Assets\logo3_padded_large.png" />
+    <Content Remove="Assets\MediumTile.scale-125.png" />
+    <Content Remove="Assets\MediumTile.scale-150.png" />
+    <Content Remove="Assets\MediumTile.scale-200.png" />
+    <Content Remove="Assets\SmallTile.scale-100.png" />
+    <Content Remove="Assets\SmallTile.scale-125.png" />
+    <Content Remove="Assets\SmallTile.scale-150.png" />
+    <Content Remove="Assets\SmallTile.scale-200.png" />
+    <Content Remove="Assets\StoreLogo.scale-100.png" />
+    <Content Remove="Assets\StoreLogo.scale-125.png" />
+    <Content Remove="Assets\StoreLogo.scale-150.png" />
+    <Content Remove="Assets\StoreLogo.scale-200.png" />
+    <Content Remove="Assets\WideTile.scale-100.png" />
+    <Content Remove="Assets\WideTile.scale-125.png" />
+    <Content Remove="Assets\WideTile.scale-150.png" />
+    <Content Remove="Assets\WideTile.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\AppIcon.scale-100.png" />
+    <None Remove="Assets\AppIcon.scale-125.png" />
+    <None Remove="Assets\AppIcon.scale-400.png" />
+    <None Remove="Assets\AppIcon.targetsize-24_altform-unplated.png" />
+    <None Remove="Assets\AppIcon.targetsize-256.png" />
+    <None Remove="Assets\BadgeLogo.scale-400.png" />
+    <None Remove="Assets\LargeTile.scale-400.png" />
+    <None Remove="Assets\logo3_padded.ico" />
+    <None Remove="Assets\logo3_padded.png" />
+    <None Remove="Assets\logo3_padded_256.png" />
+    <None Remove="Assets\logo4_large.png" />
+    <None Remove="Assets\MediumTile.scale-100.png" />
+    <None Remove="Assets\MediumTile.scale-400.png" />
+    <None Remove="Assets\SmallTile.scale-400.png" />
+    <None Remove="Assets\SplashScreen.scale-100.png" />
+    <None Remove="Assets\SplashScreen.scale-125.png" />
+    <None Remove="Assets\SplashScreen.scale-150.png" />
+    <None Remove="Assets\SplashScreen.scale-200.png" />
+    <None Remove="Assets\SplashScreen.scale-400.png" />
+    <None Remove="Assets\StoreLogo.scale-400.png" />
+    <None Remove="Assets\WideTile.scale-400.png" />
+    <None Remove="GameClient\GameClientPage.xaml" />
+    <None Remove="MainPage.xaml" />
+    <None Remove="Navigation\PlayerDBNavigationView.xaml" />
+    <None Remove="Players\BuildOrderHistoryView.xaml" />
+    <None Remove="Players\PlayerDetailsView.xaml" />
+    <None Remove="Players\PlayersPage.xaml" />
+    <None Remove="Players\RaceToggleButton.xaml" />
+    <None Remove="Replays\ReplaysPage.xaml" />
+    <None Remove="Settings\SettingsPage.xaml" />
+    <None Remove="SplashScreenPage.xaml" />
+    <None Remove="TitleBar\AppIcon.xaml" />
+    <None Remove="TitleBar\PlayerDBTitleBar.xaml" />
+    <None Remove="Util\RaceIcon.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.Animations" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.0.240109" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI" Version="7.1.2" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.0.7" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240227000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
+
+  <!-- 
+    Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
+    Tools extension to be activated for this project even if the Windows App SDK Nuget
+    package has not yet been restored.
+  -->
+  <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PlayerDB.Core\PlayerDB.Core.csproj" />
+    <ProjectReference Include="..\PlayerDB.DataModel\PlayerDB.DataModel.csproj" />
+    <ProjectReference Include="..\PlayerDB.DataStorage.LiteDB\PlayerDB.DataStorage.LiteDB.csproj" />
+    <ProjectReference Include="..\PlayerDB.Game.StarCraft2\PlayerDB.Game.StarCraft2.csproj" />
+    <ProjectReference Include="..\PlayerDB.Replay.StarCraft2\PlayerDB.Replay.StarCraft2.csproj" />
+    <ProjectReference Include="..\PlayerDB.SettingsStorage.ApplicationData\PlayerDB.SettingsStorage.ApplicationData.csproj" />
+    <ProjectReference Include="..\PlayerDB.Utilities\PlayerDB.Utilities.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="MainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="SplashScreenPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Util\RaceIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Players\RaceToggleButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Players\BuildOrderHistoryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Players\PlayerDetailsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Settings\SettingsPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="TitleBar\AppIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Navigation\PlayerDBNavigationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="TitleBar\PlayerDBTitleBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="GameClient\GameClientPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Replays\ReplaysPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Players\PlayersPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <!-- 
+    Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
+    Explorer "Package and Publish" context menu entry to be enabled for this project even if 
+    the Windows App SDK Nuget package has not yet been restored.
+  -->
+  <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+    <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
+  </PropertyGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="taskkill /f /fi &quot;imagename eq $(TargetName)*&quot;&#xD;&#xA;exit 0" />
+  </Target>
+</Project>
