@@ -10,7 +10,7 @@
   <Identity
     Name="frugssc2.StarBuild"
     Publisher="CN=B5896F09-6617-437B-9FF2-8F1B92CC10A9"
-    Version="0.1.1.0" />
+    Version="0.1.2.0" />
 
   <mp:PhoneIdentity PhoneProductId="20811c5b-d03d-4110-a339-0e79517da2b0" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
