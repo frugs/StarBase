@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using PlayerDB.Core.BuildOrder;
 using PlayerDB.Core.Player;
@@ -20,7 +22,7 @@ public sealed partial class PlayerDetailsViewModel : ObservableObject, IPlayerDe
     private readonly IPlayerManager _playerManager;
     private readonly IPlayerRepository _playerRepository;
     private readonly ISettingsService _settingsService;
-    private readonly IDisposable _sub;
+    private readonly CompositeDisposable _sub;
 
     private IReadOnlyCollection<BuildOrder> _allBuildOrders = [];
 
@@ -48,12 +50,17 @@ public sealed partial class PlayerDetailsViewModel : ObservableObject, IPlayerDe
         _playerRepository = playerRepository;
         _settingsService = settingsService;
 
-        _sub = settingsService.SettingsChangedObservable.Subscribe(args => dispatcher.TryEnqueue(() =>
-        {
-            if (args.SettingsKey != nameof(DataModel.Settings.PlayerToons)) return;
+        _sub =
+        [
+            settingsService.SettingsChangedObservable.Subscribe(args => dispatcher.TryEnqueue(() =>
+            {
+                if (args.SettingsKey != nameof(DataModel.Settings.PlayerToons)) return;
 
-            PlayerIsMe = (args.Change.PlayerToons ?? []).Contains(Toon);
-        }));
+                PlayerIsMe = (args.Change.PlayerToons ?? []).Contains(Toon);
+            })),
+            playerRepository.PlayerAddedOrUpdatedObservable.Subscribe(player => dispatcher.EnqueueAsync<Task>(() => 
+                player.Toon != Toon ? Task.CompletedTask : SetPlayer(player)))
+        ];
     }
 
     public void Dispose()
@@ -115,6 +122,11 @@ public sealed partial class PlayerDetailsViewModel : ObservableObject, IPlayerDe
     public Task SavePlayerIsMe()
     {
         return _playerManager.SetPlayerIsMe(Toon, PlayerIsMe);
+    }
+
+    public void ClearPlayer()
+    {
+        IsAvailable = false;
     }
 
     private async Task UpdateBuildOrdersImpl(CancellationToken cancellation = default)

@@ -1,5 +1,4 @@
 using System.Linq;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -52,6 +51,8 @@ public sealed partial class GameClientPage : Page
 
             if (player != null)
                 await ViewModel.PlayerDetailsViewModel.SetPlayer(player, item.PlayerRace, item.OpponentRace);
+            else
+                ViewModel.PlayerDetailsViewModel.ClearPlayer();
         }
     }
 

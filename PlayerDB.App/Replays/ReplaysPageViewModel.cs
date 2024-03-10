@@ -8,6 +8,7 @@ using System.Reactive;
 using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.WinUI;
 using Microsoft.UI.Dispatching;
 using PlayerDB.Core.Replay;
 using PlayerDB.Core.Settings;
@@ -188,8 +189,7 @@ public sealed partial class ReplaysPageViewModel(
         _sub.Add(replayManager.LoadReplaysRequestsObservable.Subscribe(
             Observer.Create<ILoadReplaysRequest>(request =>
             {
-                // ReSharper disable once AsyncVoidLambda
-                dispatcher.TryEnqueue(async () =>
+                dispatcher.EnqueueAsync(async () =>
                 {
                     do
                     {

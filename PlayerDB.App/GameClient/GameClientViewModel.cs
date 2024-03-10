@@ -29,6 +29,8 @@ public sealed partial class GameClientPageViewModel(
     private List<string> _playerToons = [];
     [ObservableProperty] private PlayerMatchItem? _selectedMatch;
     private CompositeDisposable? _sub;
+    private GameData? _cachedGameData;
+    private readonly object _lock = new();
 
     public void Dispose()
     {
@@ -58,7 +60,24 @@ public sealed partial class GameClientPageViewModel(
 
                     UpdatePlayerToons(args.Change);
                 })),
-            gameClientPollingService.GameClientObservable.Subscribe(Observer.Create<GameData>(OnGameData))
+            gameClientPollingService.GameClientObservable.Subscribe(Observer.Create<GameData>(gameData => Task.Run(() =>
+            {
+                lock (_lock)
+                {
+                    if (_cachedGameData == gameData) return;
+
+                    _cachedGameData = gameData;
+                }
+
+                OnGameData(gameData);
+            }))),
+            playerRepository.PlayerAddedOrUpdatedObservable.Subscribe(Observer.Create<Player>(_ => Task.Run(() =>
+            {
+                lock (_lock)
+                {
+                    _cachedGameData = null;
+                }
+            })))
         ];
 
         var currentSettings = await settingsService.GetCurrentSettings();

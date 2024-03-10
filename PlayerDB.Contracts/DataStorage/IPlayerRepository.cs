@@ -15,4 +15,6 @@ public interface IPlayerRepository
     Task SavePlayer(Player player, CancellationToken cancellation = default);
 
     Task DeleteAllPlayers();
+
+    IObservable<Player> PlayerAddedOrUpdatedObservable { get; }
 }

@@ -104,7 +104,7 @@ public sealed class ReplayManager(
         var buffer = new List<ParseResult>(bufferSize);
 
         await foreach (var parseResult in
-                       replayParser.ParseReplaysParallel(replayFilePaths.ToList(),
+                       replayParser.ParseReplaysParallel([.. replayFilePaths],
                                IReplayParser.Mode.Fast)
                            .WithCancellation(cancellation))
         {

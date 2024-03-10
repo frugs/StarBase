@@ -14,10 +14,11 @@ public interface IPlayerDetailsViewModel : INotifyPropertyChanged
     bool PlayerIsMe { get; set; }
     IReadOnlyCollection<StarCraftRace> PlayerRaces { get; set; }
     IReadOnlyCollection<StarCraftRace> OpponentRaces { get; set; }
-    IReadOnlyList<DataModel.BuildOrder> BuildOrders { get; }
+    IReadOnlyList<BuildOrder> BuildOrders { get; }
     string PlayerNotes { get; set; }
 
     Task SetPlayer(Player player, StarCraftRace? playerRace = null, StarCraftRace? opponentRace = null);
     Task UpdateBuildOrders();
     Task SavePlayerIsMe();
+    void ClearPlayer();
 }

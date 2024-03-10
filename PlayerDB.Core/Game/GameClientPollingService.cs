@@ -46,8 +46,7 @@ public sealed class GameClientPollingService(IGameClient gameClient) : IGameClie
         }
     }
 
-    public IObservable<GameData> GameClientObservable =>
-        _gameClientSubject.DistinctUntilChanged();
+    public IObservable<GameData> GameClientObservable => _gameClientSubject;
 
     public Task ShutDown()
     {

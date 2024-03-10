@@ -1,10 +1,13 @@
-﻿using LiteDB;
+﻿using System.Reactive.Subjects;
+using LiteDB;
 using PlayerDB.DataModel;
 
 namespace PlayerDB.DataStorage.LiteDB;
 
 public class LiteDBPlayerStorage(ILiteDBRunner runner) : IPlayerRepository
 {
+    private readonly Subject<Player> _playerAddedOrUpdatedSubject = new();
+
     static LiteDBPlayerStorage()
     {
         BsonMapper.Global.Entity<Player>()
@@ -42,9 +45,9 @@ public class LiteDBPlayerStorage(ILiteDBRunner runner) : IPlayerRepository
             cancellation);
     }
 
-    public Task SavePlayer(Player player, CancellationToken cancellation = default)
+    public async Task SavePlayer(Player player, CancellationToken cancellation = default)
     {
-        return runner.Perform(db =>
+        await runner.Perform(db =>
         {
             var col = db.GetCollection<Player>();
             col.EnsureIndex(x => x.Name);
@@ -52,12 +55,16 @@ public class LiteDBPlayerStorage(ILiteDBRunner runner) : IPlayerRepository
 
             return col.Upsert(player);
         }, cancellation);
+
+        await Task.Run(() => _playerAddedOrUpdatedSubject.OnNext(player), cancellation);
     }
 
     public Task DeleteAllPlayers()
     {
         return runner.Perform(db => db.GetCollection<Player>().DeleteAll());
     }
+
+    public IObservable<Player> PlayerAddedOrUpdatedObservable => _playerAddedOrUpdatedSubject;
 
     private static ILiteCollection<Player> GetFullCollection(ILiteDatabase db)
     {

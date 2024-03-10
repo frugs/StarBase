@@ -7,7 +7,7 @@
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="using:CommunityToolkit.WinUI.UI"
+    xmlns:winUi="using:CommunityToolkit.WinUI"
     Background="{ThemeResource PageBackgroundBrush}"
     mc:Ignorable="d">
     <Grid Style="{StaticResource NavigationPageStyle}">
@@ -19,7 +19,7 @@
             <controls:SettingsCard
                 Description="All cleared data will be deleted permanently, and cannot be reversed. Your replay files will remain unaffected."
                 Header="Data Management"
-                HeaderIcon="{ui:FontIcon Glyph=&#xe7ba;}">
+                HeaderIcon="{winUi:FontIcon Glyph=&#xe7ba;}">
                 <controls:SettingsCard.Resources>
                     <x:Double x:Key="SettingsCardWrapThreshold">100000</x:Double>
                 </controls:SettingsCard.Resources>
