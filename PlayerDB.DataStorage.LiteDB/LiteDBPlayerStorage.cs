@@ -32,7 +32,9 @@ public class LiteDBPlayerStorage(ILiteDBRunner runner) : IPlayerRepository
     {
         return runner.Perform(db =>
                 db.GetCollection<Player>()
-                    .Find(Query.EQ(nameof(Player.Name), name))
+                    .Find(Query.And(
+                        Query.EQ(nameof(Player.Name), name),
+                        Query.GTE(nameof(Player.BuildOrdersLastUpdatedUtc), DateTime.UtcNow.Subtract(TimeSpan.FromDays(356)))))
                     .ToList(),
             cancellation);
     }

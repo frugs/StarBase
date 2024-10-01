@@ -67,7 +67,8 @@ public sealed class ReplayManager(
                 tcs.SetResult(loadReplaysRequest);
 
                 await loadReplaysRequest.Task;
-            } finally
+            }
+            finally
             {
                 _loadReplaysRequestsSubject.OnNext(CompletedLoadReplaysRequest);
             }
@@ -153,9 +154,6 @@ public sealed class ReplayManager(
         var parseResult = await replayParser.ParseReplay(replayFilePath);
         if (parseResult == null) return;
 
-        var existingReplay = await replayRepository.FindReplayByPath(replayFilePath, cancellation);
-        if (existingReplay is not null) parseResult.Replay.Id = existingReplay.Id;
-
         await SaveParseResults([parseResult], cancellation);
 
         request.IsLoadingComplete = true;
@@ -170,6 +168,9 @@ public sealed class ReplayManager(
             cancellation,
             async (parseResult, _) =>
             {
+                var existingReplay = await replayRepository.FindReplayByPath(parseResult.Replay.FilePath ?? "", cancellation);
+                if (existingReplay is not null) parseResult.Replay.Id = existingReplay.Id;
+
                 await replayRepository.SaveReplay(parseResult.Replay, cancellation);
 
                 foreach (var player in parseResult.Players)
@@ -219,10 +220,15 @@ public sealed class ReplayManager(
                             player.MostRecentMmrP = next.MostRecentMmrP;
                         }
 
-                        if (player.MostRecentMmrZ == null || player.MmrLastUpdatedUtcZ < next.MmrLastUpdatedUtcZ)
+                        if (player.MmrLastUpdatedUtcZ == null || player.MmrLastUpdatedUtcZ < next.MmrLastUpdatedUtcZ)
                         {
                             player.MmrLastUpdatedUtcZ = next.MmrLastUpdatedUtcZ;
                             player.MostRecentMmrZ = next.MostRecentMmrZ;
+                        }
+
+                        if (player.BuildOrdersLastUpdatedUtc == null || player.BuildOrdersLastUpdatedUtc < next.BuildOrdersLastUpdatedUtc)
+                        {
+                            player.BuildOrdersLastUpdatedUtc = next.BuildOrdersLastUpdatedUtc;
                         }
 
                         player.BuildOrders ??= [];
@@ -262,6 +268,11 @@ public sealed class ReplayManager(
                     {
                         dbPlayer.MmrLastUpdatedUtcZ = player.MmrLastUpdatedUtcZ;
                         dbPlayer.MostRecentMmrZ = player.MostRecentMmrZ;
+                    }
+
+                    if (dbPlayer.BuildOrdersLastUpdatedUtc == null || dbPlayer.BuildOrdersLastUpdatedUtc < player.BuildOrdersLastUpdatedUtc)
+                    {
+                        dbPlayer.BuildOrdersLastUpdatedUtc = player.BuildOrdersLastUpdatedUtc;
                     }
 
                     dbPlayer.BuildOrders ??= [];

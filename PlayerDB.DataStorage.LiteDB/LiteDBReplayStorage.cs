@@ -11,8 +11,7 @@ public class LiteDBReplayStorage(ILiteDBRunner runner) : IReplayRepository
             var col = db.GetCollection<DataModel.Replay>();
             col.EnsureIndex(x => x.FilePath);
 
-            return col
-                .Upsert(replay);
+            return col.Upsert(replay);
         }, cancellation);
     }
 

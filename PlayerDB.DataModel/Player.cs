@@ -9,8 +9,9 @@ public class Player
     public int? MostRecentMmrT { get; set; }
     public int? MostRecentMmrP { get; set; }
     public int? MostRecentMmrZ { get; set; }
-    public DateTime? MmrLastUpdatedUtcT {get; set;}
+    public DateTime? MmrLastUpdatedUtcT { get; set; }
     public DateTime? MmrLastUpdatedUtcP { get; set; }
     public DateTime? MmrLastUpdatedUtcZ { get; set; }
+    public DateTime? BuildOrdersLastUpdatedUtc { get; set; }
     public List<BuildOrder>? BuildOrders { get; set; }
 }

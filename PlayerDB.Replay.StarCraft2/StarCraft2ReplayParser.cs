@@ -9,7 +9,7 @@ namespace PlayerDB.Replay.StarCraft2;
 
 public class StarCraft2ReplayParser : IReplayParser
 {
-    private const int LatestParserVersion = 3;
+    private const int LatestParserVersion = 4;
 
     private static readonly string? AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -217,6 +217,7 @@ public class StarCraft2ReplayParser : IReplayParser
                 Name = x.Name,
                 ClanName = x.ClanName,
                 Toon = AsString(x.Toon),
+                BuildOrdersLastUpdatedUtc = replayStartTimeUtc,
                 BuildOrders = playerBuildOrders
             };
 
