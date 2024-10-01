@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "name": "C#: PlayerDB.App",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\PlayerDB.App\\PlayerDB.App.csproj",
+            "launchConfigurationId": "TargetFramework=;PlayerDBApp (Unpackaged)",
+        }
+    ]
+}
