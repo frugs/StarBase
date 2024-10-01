@@ -9,7 +9,7 @@ namespace PlayerDB.Replay.StarCraft2;
 
 public class StarCraft2ReplayParser : IReplayParser
 {
-    private const int LatestParserVersion = 1;
+    private const int LatestParserVersion = 3;
 
     private static readonly string? AssemblyPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -184,35 +184,60 @@ public class StarCraft2ReplayParser : IReplayParser
                     .ToList()))
             .ToDictionary();
 
-        var extractedPlayerData = playerDetails.Select((x, i) => new Player
+        var extractedPlayerData = playerDetails.Select((Func<DetailsPlayer, int, Player>)((x, i) =>
         {
-            Name = x.Name,
-            ClanName = x.ClanName,
-            Toon = AsString(x.Toon),
-            BuildOrders =
+            var playerRace = players[i].AssignedRace.ToStarCraftRace();
+            int? playerMmr = replay.Initdata?.UserInitialData is { } userInitialData &&
+                    userInitialData.ElementAtOrDefault(i)?.ScaledRating is { } mmr and > 0 and < 10000
+                        ? (int)mmr
+                        : null;
+            List<BuildOrder> playerBuildOrders =
             [
                 new BuildOrder
                 {
                     Key = GenerateBuildOrderKey(replayStartTimeUtc, replay.FileName, x.Toon),
                     ReplayStartTimeUtc = replayStartTimeUtc,
-                    PlayerMmr = replay.Initdata?.UserInitialData is { } userInitialData &&
-                                userInitialData.ElementAtOrDefault(i)?.ScaledRating is { } mmr and > 0 and < 10000
-                        ? (int)mmr
-                        : null,
-                    PlayerRace = players[i].AssignedRace.ToStarCraftRace(),
+                    PlayerMmr = playerMmr,
+                    PlayerRace = playerRace,
                     OpponentRace = (OpponentOf(players[i])?.AssignedRace).ToStarCraftRace(),
                     BuildOrderActions = mode switch
                     {
                         IReplayParser.Mode.Fast => null,
                         IReplayParser.Mode.Full =>
-                            buildOrders.GetValueOrDefault(players[i].PlayerID) is { } buildOrder and not []
+                            CollectionExtensions.GetValueOrDefault<int, List<string>>(buildOrders, players[i].PlayerID) is { } buildOrder and not []
                                 ? buildOrder
                                 : BuildOrder.InvalidBuildOrderActions,
                         _ => null
                     }
                 }
-            ]
-        }).ToList();
+            ];
+
+            var result = new Player
+            {
+                Name = x.Name,
+                ClanName = x.ClanName,
+                Toon = AsString(x.Toon),
+                BuildOrders = playerBuildOrders
+            };
+
+            switch (playerRace)
+            {
+                case StarCraftRace.Terran:
+                    result.MmrLastUpdatedUtcT = replayStartTimeUtc;
+                    result.MostRecentMmrT = playerMmr;
+                    break;
+                case StarCraftRace.Protoss:
+                    result.MmrLastUpdatedUtcP = replayStartTimeUtc;
+                    result.MostRecentMmrP = playerMmr;
+                    break;
+                case StarCraftRace.Zerg:
+                    result.MmrLastUpdatedUtcZ = replayStartTimeUtc;
+                    result.MostRecentMmrZ = playerMmr;
+                    break;
+            }
+
+            return result;
+        })).ToList();
 
         return new ParseResult(extractedReplayData, extractedPlayerData);
 

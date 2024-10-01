@@ -1,4 +1,5 @@
 using System.Linq;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -59,5 +60,10 @@ public sealed partial class GameClientPage : Page
     public static string RenderClanName(string? clanName)
     {
         return string.IsNullOrEmpty(clanName) ? "" : $"[{clanName}]";
+    }
+
+    public static Visibility MmrVisibility(int? mmr)
+    {
+        return mmr != null ? Visibility.Visible : Visibility.Collapsed;
     }
 }

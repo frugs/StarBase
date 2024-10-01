@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using System.Reactive.Subjects;
-using PlayerDB.DataModel;
 using PlayerDB.DataStorage;
 using PlayerDB.LifeCycle;
 using PlayerDB.Replay;
@@ -35,13 +34,18 @@ public sealed class ReplayManager(
         cancellation.Register(() => tcs.TrySetCanceled(cancellation));
         _taskQueue.Enqueue(async () =>
         {
-            var loadReplaysRequest =
+            try
+            {
+                var loadReplaysRequest =
                 new LoadReplaysRequest(request => LoadReplayInner(request, replayFilePath, cancellation));
-            _loadReplaysRequestsSubject.OnNext(loadReplaysRequest);
-            tcs.SetResult(loadReplaysRequest);
-
-            await loadReplaysRequest.Task;
-            _loadReplaysRequestsSubject.OnNext(CompletedLoadReplaysRequest);
+                _loadReplaysRequestsSubject.OnNext(loadReplaysRequest);
+                tcs.SetResult(loadReplaysRequest);
+                await loadReplaysRequest.Task;
+            }
+            finally
+            {
+                _loadReplaysRequestsSubject.OnNext(CompletedLoadReplaysRequest);
+            }
         }, cancellation);
         return tcs.Task;
     }
@@ -54,14 +58,19 @@ public sealed class ReplayManager(
         cancellation.Register(() => tcs.TrySetCanceled(cancellation));
         _taskQueue.Enqueue(async () =>
         {
-            var loadReplaysRequest =
-                new LoadReplaysRequest(
-                    request => LoadSearchForAndLoadReplaysInner(request, rootFilePaths, cancellation));
-            _loadReplaysRequestsSubject.OnNext(loadReplaysRequest);
-            tcs.SetResult(loadReplaysRequest);
+            try
+            {
+                var loadReplaysRequest =
+                    new LoadReplaysRequest(
+                        request => LoadSearchForAndLoadReplaysInner(request, rootFilePaths, cancellation));
+                _loadReplaysRequestsSubject.OnNext(loadReplaysRequest);
+                tcs.SetResult(loadReplaysRequest);
 
-            await loadReplaysRequest.Task;
-            _loadReplaysRequestsSubject.OnNext(CompletedLoadReplaysRequest);
+                await loadReplaysRequest.Task;
+            } finally
+            {
+                _loadReplaysRequestsSubject.OnNext(CompletedLoadReplaysRequest);
+            }
         }, cancellation);
         return tcs.Task;
     }
@@ -86,10 +95,12 @@ public sealed class ReplayManager(
                 cancellation,
                 async (replayFilePath, _) =>
                 {
-                    // TODO: Re-parse if parser version for data in db is outdated
-                    if (await replayRepository.FindReplayByPath(
-                            replayFilePath,
-                            cancellation) is not null) return;
+                    var replay = await replayRepository.FindReplayByPath(replayFilePath, cancellation);
+                    if (cancellation.IsCancellationRequested ||
+                        (replay != null && replay.ParserVersion >= replayParser.ParserVersion))
+                    {
+                        return;
+                    }
 
                     replayFilePaths.Enqueue(replayFilePath);
 
@@ -162,8 +173,8 @@ public sealed class ReplayManager(
                 await replayRepository.SaveReplay(parseResult.Replay, cancellation);
 
                 foreach (var player in parseResult.Players)
-                foreach (var buildOrder in player.BuildOrders ?? [])
-                    buildOrder.Replay = parseResult.Replay;
+                    foreach (var buildOrder in player.BuildOrders ?? [])
+                        buildOrder.Replay = parseResult.Replay;
             });
 
         var buildOrders = parseResults
@@ -196,6 +207,24 @@ public sealed class ReplayManager(
 
                     if (acc.TryGetValue(next.Toon, out var player))
                     {
+                        if (player.MmrLastUpdatedUtcT == null || player.MmrLastUpdatedUtcT < next.MmrLastUpdatedUtcT)
+                        {
+                            player.MmrLastUpdatedUtcT = next.MmrLastUpdatedUtcT;
+                            player.MostRecentMmrT = next.MostRecentMmrT;
+                        }
+
+                        if (player.MmrLastUpdatedUtcP == null || player.MmrLastUpdatedUtcP < next.MmrLastUpdatedUtcP)
+                        {
+                            player.MmrLastUpdatedUtcP = next.MmrLastUpdatedUtcP;
+                            player.MostRecentMmrP = next.MostRecentMmrP;
+                        }
+
+                        if (player.MostRecentMmrZ == null || player.MmrLastUpdatedUtcZ < next.MmrLastUpdatedUtcZ)
+                        {
+                            player.MmrLastUpdatedUtcZ = next.MmrLastUpdatedUtcZ;
+                            player.MostRecentMmrZ = next.MostRecentMmrZ;
+                        }
+
                         player.BuildOrders ??= [];
                         player.BuildOrders.AddRange(next.BuildOrders ?? []);
                     }
@@ -217,10 +246,27 @@ public sealed class ReplayManager(
                 var dbPlayer = await playerRepository.FindPlayerByToon(player.Toon ?? "", cancellation);
                 if (dbPlayer != null)
                 {
-                    var playerBuildOrders = player.BuildOrders ?? [];
+                    if (dbPlayer.MmrLastUpdatedUtcT == null || dbPlayer.MmrLastUpdatedUtcT < player.MmrLastUpdatedUtcT)
+                    {
+                        dbPlayer.MmrLastUpdatedUtcT = player.MmrLastUpdatedUtcT;
+                        dbPlayer.MostRecentMmrT = player.MostRecentMmrT;
+                    }
+
+                    if (dbPlayer.MmrLastUpdatedUtcP == null || dbPlayer.MmrLastUpdatedUtcP < player.MmrLastUpdatedUtcP)
+                    {
+                        dbPlayer.MmrLastUpdatedUtcP = player.MmrLastUpdatedUtcP;
+                        dbPlayer.MostRecentMmrP = player.MostRecentMmrP;
+                    }
+
+                    if (dbPlayer.MostRecentMmrZ == null || dbPlayer.MmrLastUpdatedUtcZ < player.MmrLastUpdatedUtcZ)
+                    {
+                        dbPlayer.MmrLastUpdatedUtcZ = player.MmrLastUpdatedUtcZ;
+                        dbPlayer.MostRecentMmrZ = player.MostRecentMmrZ;
+                    }
 
                     dbPlayer.BuildOrders ??= [];
-                    dbPlayer.BuildOrders.AddRange(playerBuildOrders
+                    dbPlayer.BuildOrders.AddRange(
+                        (player.BuildOrders ?? [])
                         .Where(x => !dbPlayer
                             .BuildOrders
                             .Select(y => y.Id)

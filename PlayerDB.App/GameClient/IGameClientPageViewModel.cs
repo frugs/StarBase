@@ -10,6 +10,7 @@ public record PlayerMatchItem(
     string ClanName,
     string Name,
     string Toon,
+    int? Mmr,
     StarCraftRace? PlayerRace,
     StarCraftRace? OpponentRace)
 {

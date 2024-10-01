@@ -14,24 +14,39 @@
     mc:Ignorable="d">
     <Page.Resources>
         <DataTemplate x:Key="MatchesListViewTemplate" x:DataType="gameClient:PlayerMatchItem">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,5,5,5">
-                    <Run Text="{x:Bind gameClient:GameClientPage.RenderClanName(ClanName)}" />
-                    <Run Text="{x:Bind Name}" />
-                </TextBlock>
-                <Border
-                    VerticalAlignment="Center"
-                    Background="{ThemeResource BadgeBackgroundBrush}"
-                    CornerRadius="10">
-                    <util:RaceIcon
-                        Width="12"
-                        Height="12"
-                        Margin="3"
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock Margin="0,5,5,5">
+                        <Run Text="{x:Bind gameClient:GameClientPage.RenderClanName(ClanName), Mode=OneTime}" />
+                        <Run Text="{x:Bind Name, Mode=OneTime}" />
+                    </TextBlock>
+                    <Border
                         VerticalAlignment="Center"
-                        UseRaceColourFill="False"
-                        ViewModel="{x:Bind PlayerRace}" />
-                </Border>
-            </StackPanel>
+                        Background="{ThemeResource BadgeBackgroundBrush}"
+                        CornerRadius="10">
+                        <util:RaceIcon
+                            Width="12"
+                            Height="12"
+                            Margin="3"
+                            VerticalAlignment="Center"
+                            UseRaceColourFill="False"
+                            ViewModel="{x:Bind PlayerRace}" />
+                    </Border>
+                </StackPanel>
+                <TextBlock
+                    Grid.Column="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    FontStyle="Italic"
+                    Visibility="{x:Bind gameClient:GameClientPage.MmrVisibility(Mmr), Mode=OneTime}">
+                    <Run Text="MMR: " />
+                    <Run Text="{x:Bind Mmr, Mode=OneTime}" />
+                </TextBlock>
+            </Grid>
         </DataTemplate>
     </Page.Resources>
     <Grid Style="{StaticResource NavigationPageStyle}">

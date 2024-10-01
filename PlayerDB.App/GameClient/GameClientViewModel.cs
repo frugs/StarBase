@@ -119,6 +119,11 @@ public sealed partial class GameClientPageViewModel(
         }
 
         removed.Reverse();
+
+        var orderedByMmr = Matches.OrderByDescending(x => x.Mmr ?? 0).ToList();
+        
+        Matches.Clear();
+        Matches.AddAll(orderedByMmr);
         Matches.AddAll(removed);
 
         SelectedMatch ??= Matches.FirstOrDefault();
@@ -150,6 +155,13 @@ public sealed partial class GameClientPageViewModel(
                     player.ClanName ?? "",
                     player.Name ?? "",
                     player.Toon ?? "",
+                    Mmr: playerData.Race switch
+                    {
+                        StarCraftRace.Terran => player.MostRecentMmrT,
+                        StarCraftRace.Protoss => player.MostRecentMmrP,
+                        StarCraftRace.Zerg => player.MostRecentMmrZ,
+                        _ => null,
+                    },
                     playerData.Race,
                     playerData.GetOpponent(gameData.Players)?.Race ?? StarCraftRace.Unknown
                 )
