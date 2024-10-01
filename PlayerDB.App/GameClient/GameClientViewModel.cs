@@ -110,12 +110,19 @@ public sealed partial class GameClientPageViewModel(
     private void SortMatches()
     {
         var removed = new List<PlayerMatchItem>();
+        var selected = SelectedMatch;
+
         for (var i = Matches.Count - 1; i >= 0; i--)
         {
             if (!_playerToons.Contains(Matches[i].Toon)) continue;
 
             removed.Add(Matches[i]);
             Matches.RemoveAt(i);
+        }
+
+        if (selected != null && removed.Contains(selected))
+        {
+            selected = null;
         }
 
         removed.Reverse();
@@ -126,7 +133,7 @@ public sealed partial class GameClientPageViewModel(
         Matches.AddAll(orderedByMmr);
         Matches.AddAll(removed);
 
-        SelectedMatch ??= Matches.FirstOrDefault();
+        SelectedMatch = selected != null && Matches.Contains(selected) ? selected : Matches.FirstOrDefault();
     }
 
     private async void OnGameData(GameData gameData)
@@ -139,7 +146,13 @@ public sealed partial class GameClientPageViewModel(
         {
             if (Matches.SequenceEqual(playerMatches)) return;
 
+            var selected = SelectedMatch;
             Matches.OverwriteWith(playerMatches);
+
+            if (selected != null && Matches.Contains(selected))
+            {
+                SelectedMatch = selected;
+            }
 
             SortMatches();
             UpdateGameClientConnectionState();
