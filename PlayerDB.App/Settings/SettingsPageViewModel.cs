@@ -25,5 +25,6 @@ public class SettingsPageViewModel(
         await settingsService.ClearSettingsKey(nameof(DataModel.Settings.ScanReplayFoldersOnAppStart));
         await settingsService.ClearSettingsKey(nameof(DataModel.Settings.ReplayFolderPaths));
         await settingsService.ClearSettingsKey(nameof(DataModel.Settings.WatchReplayFolders));
+        await settingsService.ClearSettingsKey(nameof(DataModel.Settings.PlayerFilterRecentSecs));
     }
 }

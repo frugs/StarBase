@@ -48,6 +48,9 @@
                 </TextBlock>
             </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="PlayerFilterRecentComboBoxTemplate" x:DataType="x:Int32">
+            <TextBlock Padding="4,0,0,0" Text="{x:Bind gameClient:GameClientPage.RenderTimeSpan((x:Int32)), Mode=OneTime}" />
+        </DataTemplate>
     </Page.Resources>
     <Grid Style="{StaticResource NavigationPageStyle}">
         <Grid.ColumnDefinitions>
@@ -85,6 +88,17 @@
                 FontSize="18">
                 Possible player matches
             </TextBlock>
+            <ComboBox
+                x:Name="PlayerFilterRecent"
+                Margin="0,10,0,25"
+                Padding="10,10"
+                HorizontalAlignment="Left"
+                controls:DockPanel.Dock="Bottom"
+                Header="Filter player matches by recent activity"
+                ItemTemplate="{StaticResource PlayerFilterRecentComboBoxTemplate}"
+                ItemsSource="{x:Bind gameClient:GameClientPage.PlayerFilterRecentOptions, Mode=OneTime}"
+                SelectedItem="{x:Bind ViewModel.PlayerFilterRecentSecs, Mode=TwoWay}"
+                SelectionChanged="PlayerFilterRecent_SelectionChanged" />
             <ListView
                 x:Name="MatchesListView"
                 Width="250"

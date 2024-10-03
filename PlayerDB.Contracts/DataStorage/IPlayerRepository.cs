@@ -10,7 +10,7 @@ public interface IPlayerRepository
 
     Task<Player?> FindPlayerByToon(string toon, CancellationToken cancellation = default);
 
-    Task<List<Player>> MatchPlayersByName(string name, CancellationToken cancellation = default);
+    Task<List<Player>> MatchPlayersByName(string name, long? recentSecs = null, CancellationToken cancellation = default);
 
     Task SavePlayer(Player player, CancellationToken cancellation = default);
 

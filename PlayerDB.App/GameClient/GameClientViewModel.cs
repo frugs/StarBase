@@ -26,11 +26,14 @@ public sealed partial class GameClientPageViewModel(
 {
     [ObservableProperty] private bool _isConnectedToGameClient;
     [ObservableProperty] private bool _isWaitingForPlayer;
+    [ObservableProperty] private int? _playerFilterRecentSecs;
     private List<string> _playerToons = [];
     [ObservableProperty] private PlayerMatchItem? _selectedMatch;
     private CompositeDisposable? _sub;
     private GameData? _cachedGameData;
     private readonly object _lock = new();
+    
+    private int _rev = 0;
 
     public void Dispose()
     {
@@ -56,9 +59,13 @@ public sealed partial class GameClientPageViewModel(
             settingsService.SettingsChangedObservable.Subscribe(
                 Observer.Create<(string SettingsKey, DataModel.Settings Change)>(args =>
                 {
-                    if (args.SettingsKey != nameof(DataModel.Settings.PlayerToons)) return;
-
-                    UpdatePlayerToons(args.Change);
+                    if (args.SettingsKey == nameof(DataModel.Settings.PlayerToons)) 
+                    {
+                        UpdatePlayerToons(args.Change);
+                    } else if (args.SettingsKey == nameof(DataModel.Settings.PlayerFilterRecentSecs))
+                    {
+                        PlayerFilterRecentSecs = (int)(args.Change.PlayerFilterRecentSecs ?? DefaultSettings.PlayerFilterRecentSecs);
+                    }
                 })),
             gameClientPollingService.GameClientObservable.Subscribe(Observer.Create<GameData>(gameData => Task.Run(() =>
             {
@@ -82,6 +89,7 @@ public sealed partial class GameClientPageViewModel(
 
         var currentSettings = await settingsService.GetCurrentSettings();
         UpdatePlayerToons(currentSettings);
+        UpdatePlayerFilterRecentSecs(currentSettings);
     }
 
     private void UpdateGameClientConnectionState()
@@ -106,6 +114,15 @@ public sealed partial class GameClientPageViewModel(
         dispatcher.TryEnqueue(SortMatches);
     }
 
+    private void UpdatePlayerFilterRecentSecs(DataModel.Settings currentSettings)
+    {
+        var settingsValue = (int)(currentSettings.PlayerFilterRecentSecs ?? DefaultSettings.PlayerFilterRecentSecs);
+        if (PlayerFilterRecentSecs != settingsValue)
+        {
+            PlayerFilterRecentSecs = settingsValue;
+        }
+    }
+
     // TODO: This should be implemented via the ICollectionView interface
     private void SortMatches()
     {
@@ -128,7 +145,7 @@ public sealed partial class GameClientPageViewModel(
         removed.Reverse();
 
         var orderedByMmr = Matches.OrderByDescending(x => x.Mmr ?? 0).ToList();
-        
+
         Matches.Clear();
         Matches.AddAll(orderedByMmr);
         Matches.AddAll(removed);
@@ -138,12 +155,16 @@ public sealed partial class GameClientPageViewModel(
 
     private async void OnGameData(GameData gameData)
     {
+        var rev = ++_rev;
+
         var playerMatches = (await Task.WhenAll(
                 gameData.Players.Select(x => Task.Run(() => MatchPlayersByName(x, gameData))))
             ).FoldToList();
 
         dispatcher.TryEnqueue(() =>
         {
+            if (rev != _rev) return;
+            
             if (Matches.SequenceEqual(playerMatches)) return;
 
             var selected = SelectedMatch;
@@ -161,13 +182,25 @@ public sealed partial class GameClientPageViewModel(
 
     private async Task<IEnumerable<PlayerMatchItem>> MatchPlayersByName(GamePlayerData playerData, GameData gameData)
     {
-        var playerMatches = await playerRepository.MatchPlayersByName(playerData.PlayerName);
+        var currentSettings = await settingsService.GetCurrentSettings();
+
+        var playerMatches = await playerRepository.MatchPlayersByName(
+            playerData.PlayerName, 
+            currentSettings.PlayerFilterRecentSecs ?? DefaultSettings.PlayerFilterRecentSecs);
+
         return playerMatches
+            .Where(player => player.BuildOrders?.Any(x =>
+            {
+                var opponentData = playerData.GetOpponent(gameData.Players);
+                return (playerData.Race == null || x.PlayerRace == playerData.Race) &&
+                    (opponentData?.Race == null || x.OpponentRace == opponentData.Race);
+            }) == true)
             .Select(player => new PlayerMatchItem(
                     player.Id,
                     player.ClanName ?? "",
                     player.Name ?? "",
                     player.Toon ?? "",
+                    BuildOrderRaces: player.BuildOrders?.Select(x => x.PlayerRace).ToHashSet() ?? [],
                     Mmr: playerData.Race switch
                     {
                         StarCraftRace.Terran => player.MostRecentMmrT,
@@ -175,8 +208,8 @@ public sealed partial class GameClientPageViewModel(
                         StarCraftRace.Zerg => player.MostRecentMmrZ,
                         _ => null,
                     },
-                    playerData.Race,
-                    playerData.GetOpponent(gameData.Players)?.Race ?? StarCraftRace.Unknown
+                    PlayerRace: playerData.Race,
+                    OpponentRace: playerData.GetOpponent(gameData.Players)?.Race ?? StarCraftRace.Unknown
                 )
             );
     }
@@ -185,5 +218,16 @@ public sealed partial class GameClientPageViewModel(
     {
         gameClientPollingService.IsStarted = value;
         UpdateGameClientConnectionState();
+    }
+
+    public async Task OnPlayerFilterRecentSecsChanged()
+    {
+        await settingsService.ApplySettingsChange(
+            nameof(DataModel.Settings.PlayerFilterRecentSecs), 
+            new DataModel.Settings { PlayerFilterRecentSecs = PlayerFilterRecentSecs });
+
+        if (_cachedGameData == null) return;
+
+        await Task.Run(() => OnGameData(_cachedGameData));
     }
 }

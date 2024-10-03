@@ -82,6 +82,10 @@ public static class SettingsExtensions
                 originalSettings.PlayerToons,
                 change.PlayerToons,
                 value => originalSettings.PlayerToons = value),
+            nameof(DataModel.Settings.PlayerFilterRecentSecs) => ApplyLongChange(
+                originalSettings.PlayerFilterRecentSecs,
+                change.PlayerFilterRecentSecs,
+                value => originalSettings.PlayerFilterRecentSecs = value),
             _ => false
         };
 
@@ -100,6 +104,14 @@ public static class SettingsExtensions
                     setter(changeList.ToList());
                     return true;
             }
+        }
+
+        static bool ApplyLongChange(long? originalLong, long? changeLong, Action<long?> setter)
+        {
+            if (originalLong == changeLong) return false;
+
+            setter(changeLong);
+            return true;
         }
 
         static bool ApplyBoolChange(bool? originalBool, bool? changeBool, Action<bool?> setter)

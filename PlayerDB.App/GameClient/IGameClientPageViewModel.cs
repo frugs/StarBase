@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using PlayerDB.App.Util;
@@ -11,6 +12,7 @@ public record PlayerMatchItem(
     string Name,
     string Toon,
     int? Mmr,
+    HashSet<StarCraftRace> BuildOrderRaces, 
     StarCraftRace? PlayerRace,
     StarCraftRace? OpponentRace)
 {
@@ -27,9 +29,13 @@ public interface IGameClientPageViewModel : IActivatableViewModel
 
     PlayerMatchItem? SelectedMatch { get; set; }
 
+    int? PlayerFilterRecentSecs { get; set; }
+
     IPlayerDetailsViewModel PlayerDetailsViewModel { get; }
+
+    bool IsWaitingForPlayer { get; }
 
     Task<Player?> LoadPlayerDetails(int playerId);
 
-    bool IsWaitingForPlayer { get; }
+    Task OnPlayerFilterRecentSecsChanged();
 }

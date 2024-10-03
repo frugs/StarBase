@@ -9,6 +9,8 @@ public class Settings
     public bool? WatchReplayFolders { get; set; }
 
     public IReadOnlyCollection<string>? PlayerToons { get; set; }
+
+    public long? PlayerFilterRecentSecs { get; set; }
 }
 
 public static class DefaultSettings
@@ -20,4 +22,6 @@ public static class DefaultSettings
     public static bool WatchReplayFolders { get; } = true;
 
     public static IReadOnlyCollection<string> PlayerToons { get; } = [];
+
+    public static long PlayerFilterRecentSecs { get; } = (int)TimeSpan.FromDays(180).TotalSeconds;
 }

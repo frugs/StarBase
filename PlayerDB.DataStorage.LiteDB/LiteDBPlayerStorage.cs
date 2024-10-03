@@ -28,13 +28,22 @@ public class LiteDBPlayerStorage(ILiteDBRunner runner) : IPlayerRepository
             cancellation);
     }
 
-    public Task<List<Player>> MatchPlayersByName(string name, CancellationToken cancellation = default)
+    public Task<List<Player>> MatchPlayersByName(string name, long? recentSecs = null, CancellationToken cancellation = default)
     {
+        var query = Query.EQ(nameof(Player.Name), name);
+        if (recentSecs != null)
+        {
+            query = Query.And(
+                query,
+                Query.GTE(
+                    nameof(Player.BuildOrdersLastUpdatedUtc),
+                    DateTime.UtcNow.Subtract(TimeSpan.FromSeconds((double)recentSecs))));
+        }
+
         return runner.Perform(db =>
                 db.GetCollection<Player>()
-                    .Find(Query.And(
-                        Query.EQ(nameof(Player.Name), name),
-                        Query.GTE(nameof(Player.BuildOrdersLastUpdatedUtc), DateTime.UtcNow.Subtract(TimeSpan.FromDays(356)))))
+                    .Include(BsonExpression.Create(nameof(Player.BuildOrders)))
+                    .Find(query)
                     .ToList(),
             cancellation);
     }

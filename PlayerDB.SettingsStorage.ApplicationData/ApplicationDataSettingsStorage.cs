@@ -36,6 +36,12 @@ public class ApplicationDataSettingsStorage : ISettingsStorage
                 value is string stringValue and not "")
                 settings.PlayerToons = [.. Split(stringValue)];
         }
+        {
+            if (LocalSettings.Values.TryGetValue(MapPropertyToKey(nameof(Settings.PlayerFilterRecentSecs)),
+                    out var value) &&
+                value is long longValue)
+                settings.PlayerFilterRecentSecs = longValue;
+        }
 
         return Task.FromResult(settings);
 
@@ -65,6 +71,10 @@ public class ApplicationDataSettingsStorage : ISettingsStorage
             LocalSettings.Values[MapPropertyToKey(nameof(Settings.PlayerToons))] =
                 string.Join(',', settings.PlayerToons);
 
+        if (settings.PlayerFilterRecentSecs != null)
+            LocalSettings.Values[MapPropertyToKey(nameof(Settings.PlayerFilterRecentSecs))] =
+                settings.PlayerFilterRecentSecs;
+
         return Task.CompletedTask;
     }
 
@@ -80,6 +90,8 @@ public class ApplicationDataSettingsStorage : ISettingsStorage
                 nameof(Settings.WatchReplayFolders),
             nameof(Settings.PlayerToons) =>
                 nameof(Settings.PlayerToons),
+            nameof(Settings.PlayerFilterRecentSecs) =>
+                nameof(Settings.PlayerFilterRecentSecs),
             _ => ""
         };
     }
